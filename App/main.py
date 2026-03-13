@@ -5,6 +5,7 @@ from App.face_service import get_face_embedding
 from App.vector_store import add_face, search_face
 from fastapi import UploadFile, File
 from App.recognition_log import add_log
+from fastapi.responses import FileResponse
 
 app = FastAPI()
 
@@ -76,3 +77,7 @@ async def recognize_frame(file: UploadFile = File(...)):
     add_log(name)
 
     return {"name": name}
+
+@app.get("/dashboard")
+def dashboard():
+    return FileResponse("dashboard.html")
