@@ -2,73 +2,74 @@
 <html>
 
 <head>
-
 <title>Face Recognition Dashboard</title>
 
 <style>
 
-body {
-    background: #111;
-    color: white;
-    font-family: Arial;
-    text-align: center;
+body{
+background:#111;
+color:white;
+text-align:center;
+font-family:Arial;
 }
 
-table {
-    margin: auto;
-    border-collapse: collapse;
+video{
+border:3px solid white;
 }
 
-th, td {
-    padding: 12px;
-    border: 1px solid #444;
+#name{
+font-size:30px;
+margin-top:20px;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<h1>Real-Time Recognition Dashboard</h1>
+<h1>Face Recognition System</h1>
 
-<table id="logs">
-<tr>
-<th>Name</th>
-<th>Time</th>
-</tr>
-</table>
+<video id="video" width="640" height="480" autoplay></video>
+
+<div id="name">Detecting...</div>
 
 <script>
 
-async function loadLogs() {
+const video = document.getElementById("video");
 
-    const res = await fetch("http://127.0.0.1:8000/logs");
-    const logs = await res.json();
+navigator.mediaDevices.getUserMedia({video:true})
+.then(stream=>{
+    video.srcObject = stream;
+});
 
-    const table = document.getElementById("logs");
+async function sendFrame(){
 
-    table.innerHTML = `
-    <tr>
-        <th>Name</th>
-        <th>Time</th>
-    </tr>
-    `;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
-    logs.forEach(log => {
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video,0,0);
 
-        table.innerHTML += `
-        <tr>
-            <td>${log.name}</td>
-            <td>${log.time}</td>
-        </tr>
-        `;
+    canvas.toBlob(async(blob)=>{
+
+        const formData = new FormData();
+        formData.append("file",blob,"frame.jpg");
+
+        const res = await fetch("http://127.0.0.1:8000/recognize_frame",{
+            method:"POST",
+            body:formData
+        });
+
+        const data = await res.json();
+
+        document.getElementById("name").innerText = data.name;
 
     });
 
 }
 
-setInterval(loadLogs, 1000);
+setInterval(sendFrame,2000);
 
 </script>
 

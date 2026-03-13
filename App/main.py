@@ -3,6 +3,8 @@ import shutil
 from App.recognition_log import get_logs
 from App.face_service import get_face_embedding
 from App.vector_store import add_face, search_face
+from fastapi import UploadFile, File
+from App.recognition_log import add_log
 
 app = FastAPI()
 
@@ -52,3 +54,25 @@ async def recognize_face(file: UploadFile = File(...)):
 @app.get("/logs")
 def recognition_logs():
     return get_logs()
+
+@app.post("/recognize_frame")
+async def recognize_frame(file: UploadFile = File(...)):
+
+    file_path = f"images/{file.filename}"
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    embedding = get_face_embedding(file_path)
+
+    if embedding is None:
+        return {"name": "Unknown"}
+
+    name = search_face(embedding)
+
+    if not name:
+        name = "Unknown"
+
+    add_log(name)
+
+    return {"name": name}
