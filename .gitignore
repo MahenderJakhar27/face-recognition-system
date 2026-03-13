@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+
+face_index.faiss
+face_labels.pkl
+images/
+
+.DS_Store
