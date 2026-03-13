@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
 import shutil
-
+from App.recognition_log import get_logs
 from App.face_service import get_face_embedding
 from App.vector_store import add_face, search_face
 
@@ -48,3 +48,7 @@ async def recognize_face(file: UploadFile = File(...)):
         return {"recognized": name}
 
     return {"recognized": "Unknown"}
+
+@app.get("/logs")
+def recognition_logs():
+    return get_logs()

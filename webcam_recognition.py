@@ -1,6 +1,6 @@
 import cv2
 import face_recognition
-
+from App.recognition_log import add_log
 from App.vector_store import search_face
 
 video_capture = cv2.VideoCapture(0)
@@ -44,6 +44,8 @@ while True:
 
         if not name:
             name = "Unknown"
+
+        add_log(name)
 
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
 
