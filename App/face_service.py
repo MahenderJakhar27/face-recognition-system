@@ -1,4 +1,5 @@
-import face_recognition
+from deepface import DeepFace
+import numpy as np
 
 
 def get_face_embedding(image_path):
@@ -6,16 +7,18 @@ def get_face_embedding(image_path):
     Detects face in an image and returns the face embedding vector
     """
 
-    # Load image
-    image = face_recognition.load_image_file(image_path)
+    try:
+        embedding_obj = DeepFace.represent(
+            img_path=image_path,
+            model_name="Facenet",
+            enforce_detection=False
+        )
 
-    # Detect faces
-    face_locations = face_recognition.face_locations(image)
+        if not embedding_obj:
+            return None
 
-    if len(face_locations) == 0:
+        return np.array(embedding_obj[0]["embedding"])
+
+    except Exception as e:
+        print(f"Embedding error: {e}")
         return None
-
-    # Generate embeddings
-    encodings = face_recognition.face_encodings(image, face_locations)
-
-    return encodings[0]

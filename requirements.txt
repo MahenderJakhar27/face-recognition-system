@@ -8,3 +8,5 @@ python-multipart==0.0.22
 pydantic==2.12.5
 starlette==0.52.1
 typing-extensions==4.15.0
+deepface==0.0.93
+tf-keras
