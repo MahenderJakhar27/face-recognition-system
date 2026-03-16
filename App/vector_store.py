@@ -51,7 +51,7 @@ def search_face(embedding):
     distances = D[0]
     indexes = I[0]
 
-    threshold = 0.45
+    threshold = 0.35
     candidates = []
 
     for dist, idx in zip(distances, indexes):
